@@ -1,0 +1,129 @@
+@model Sapientopoli.Models.ViewModels.LessonDetailViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewBag.Title = "Lesson Details";
+}
+
+<link rel="stylesheet" href="@(Url.Content("~/css/dettagli.css"))">
+
+<h2>@Model.Lezioni.Titolo</h2>
+
+<iframe id="videoPlayer" width="560" height="315" src="@Model.Lezioni.Video" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+   
+<div id="teoriaLezione"></div>
+
+@if (Model.Progressi.LezioniCompletate >= Model.Lezioni.Sequenza && Model.Progressi.LezioniCompletate != 0)
+{
+    <form asp-action="Detail" asp-controller="Corsi" asp-route-id="@Model.Lezioni.CorsoId" asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")">
+        <button class="btn" type="submit">Quiz Completato. Torna al corso.</button>
+    </form>
+}
+else
+{
+    <button id="startQuizButton" class="btn" type="button" disabled onclick="startQuiz()">Start Quiz</button>
+    <span id="timer" style="margin-left: 10px;">00:15</span> <!-- Timer -->
+}
+
+<form id="quizForm" method="post" asp-route-lezioneId="@Model.Lezioni.Id" asp-action="SegnalaCompletamentoLezione"
+    asp-controller="corsi" style="display: none;" onsubmit="return validateAnswers()">
+    <div>
+        @foreach (var quiz in Model.Quiz) 
+        {
+            <div class="quiz">
+                <h4>@quiz.Titolo</h4>
+                <div class="domande">
+                    @foreach (var domanda in quiz.Domande)
+                    {
+                        <div class="domanda">
+                            <h5>@domanda.TestoDomanda</h5>
+                            <ul class="risposte" id="domanda-@domanda.Id">
+                                @foreach (var risposta in domanda.Risposte.OrderBy(r => Guid.NewGuid()))
+                                {
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="Domanda_@domanda.Id" value="@risposta.Id"
+                                                class="risposta-@risposta.IsCorretta" />
+                                            @risposta.TestoRisposta
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <button class="btn" type="submit">Submit Answers</button>
+</form>
+
+<div id="resultMessage" style="display:none; margin-top:20px;"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var startQuizButton = document.getElementById('startQuizButton');
+        var timerElement = document.getElementById('timer');
+        var timeLeft = 15; // 15 secondi
+
+        // Funzione per aggiornare il timer
+        function updateTimer() {
+            var minutes = Math.floor(timeLeft / 60);
+            var seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timeLeft--;
+            if (timeLeft < 0) {
+                clearInterval(timerInterval);
+                startQuizButton.disabled = false; // Abilita il pulsante dopo il timer
+                timerElement.textContent = "Go!";
+            }
+        }
+
+        // Avvia il timer per abilitare il pulsante del quiz
+        updateTimer(); // Aggiorna immediatamente il timer per evitare un ritardo di un secondo
+        var timerInterval = setInterval(updateTimer, 1000); // Aggiorna il timer ogni secondo
+    });
+
+    function startQuiz() {
+        // Mostra il modulo del quiz quando l'utente fa clic sul pulsante
+        document.getElementById('quizForm').style.display = 'block';
+
+        // Disabilita il pulsante "Start Quiz" dopo il clic
+        document.getElementById('startQuizButton').disabled = true;
+    }
+
+    function validateAnswers() {
+        // Ottieni tutte le domande
+        var domande = document.querySelectorAll('.domanda');
+        var allCorrect = true;
+
+        // Controlla se tutte le risposte selezionate sono corrette
+        for (var i = 0; i < domande.length; i++) {
+            var selectedAnswer = domande[i].querySelector('input[type="radio"]:checked');
+            if (!selectedAnswer || !selectedAnswer.classList.contains('risposta-True')) {
+                allCorrect = false;
+                break;
+            }
+        }
+
+        // Mostra il messaggio di risultato
+        var resultMessage = document.getElementById('resultMessage');
+        if (allCorrect) {
+            resultMessage.textContent = 'TEST SUPERATO';
+            resultMessage.style.color = 'green';
+        } else {
+            resultMessage.textContent = 'TEST NON SUPERATO';
+            resultMessage.style.color = 'red';
+        }
+        resultMessage.style.display = 'block';
+
+        // Ritorna false per impedire l'invio del modulo se una risposta è errata
+        return allCorrect;
+    }
+
+    // Testo ricevuto dal database
+    var textFromDatabase = `@Html.Raw(Model.Lezioni.Teoria)`;
+    // Applica il testo al contenitore HTML
+    document.getElementById('teoriaLezione').innerHTML = textFromDatabase;
+</script>

@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";   
+}
+@model UtentiViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<style>
+    .centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .text-container {
+        margin-left: 100px; /* Sposta il testo verso destra all'inizio */
+        opacity: 0;
+        transition: margin-left 5s, opacity 1s;
+    }
+
+    .text-container.show {
+        margin-left: 20px; /* Sposta il testo verso sinistra quando appare */
+        opacity: 1;
+    }
+</style>
+
+<div class="centered">
+    <img src="@(Url.Content("~/img/logo.jpg"))" id="logo" style="display:none;">
+    <div class="text-container">
+        <h1 class="display-4" style="color: var(--blu-elettrico);" id="title">Benvenuto a Sapientopoli!</h1>
+        <h2 style="color: var(--giallo-solare);" id="subtitle">Scopri i nostri corsi per imparare...divertendoti!</h2>
+        <p id="story">In una città vibrante di conoscenza e creatività, dove ogni strada è un sentiero verso la scoperta e ogni piazza è un luogo di incontro per menti affini, c'è Sapientopoli. Qui, le porte della saggezza sono sempre aperte per coloro che vogliono imparare, esplorare e crescere.</p>
+        @if(Context.Session.GetInt32("id") != null)
+        {
+            <p>Benvenuto a Sapientopoli!</p> 
+            <p>Scopri i nostri corsi per imparare...divertendoti!</p>
+            <form asp-action="ListaCorsi" asp-controller="Corsi">
+            <button class="btn btn-primary" >Esplora i Corsi</button>
+            </form>
+        }
+        else
+        {
+            <p>Un sito sicuro e gratuito, basterà solo iscriversi :)</p>
+            <form asp-action="Registrazione" asp-controller="Login">
+                <button class="btn btn-primary">Iscriviti Ora</button>
+            </form>
+        }
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        document.getElementById("logo").style.display = "block";
+        document.querySelector(".text-container").classList.add("show");
+        document.getElementById("title").innerHTML = "Benvenuto a Sapientopoli!";
+        document.getElementById("subtitle").innerHTML = "Scopri i nostri corsi per imparare...divertendoti!";
+        document.getElementById("story").innerHTML = "In una città vibrante di conoscenza e creatività, dove ogni strada è un sentiero verso la scoperta e ogni piazza è un luogo di incontro per menti affini, c'è Sapientopoli. Qui, le porte della saggezza sono sempre aperte per coloro che vogliono imparare, esplorare e crescere.";
+    };
+</script>

@@ -1,0 +1,180 @@
+<section class="gradient-custom" >
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-9 col-xl-7">
+        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+             <div class="d-flex align-items-center mb-3 pb-1">
+                    <img src="@(Url.Content("~/img/logo.jpg"))" class="nav-logo">
+                    <span class="h1 fw-bold mb-0">Registration Form</span>
+                  </div>
+            <form asp-controller="Admin" asp-action="AddUserAdmin" method="post" enctype="multipart/form-data">
+
+              <div class="row">
+                <div class="col-md-6 mb-4">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="text" name="Nome" id="firstName" class="form-control form-control-lg" />
+                    <label class="form-label" for="firstName">First Name</label>
+                  </div>
+
+                </div>
+                <div class="col-md-6 mb-4">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="text" id="lastName" class="form-control form-control-lg" name="Cognome" />
+                    <label class="form-label" for="lastName">Last Name</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 d-flex align-items-center">
+                  <div data-mdb-input-init class="form-outline  w-100">
+                    <input type="text" class="form-control form-control-lg datepicker" id="birthdayDate"
+                      name="DataDiNascita" readonly />
+                    <label for="birthdayDate" class="form-label">Birthday</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+
+                  <h6 class="mb-2 pb-1">Gender: </h6>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Genere" id="femaleGender" value="Female"
+                      checked />
+                    <label class="form-check-label" for="femaleGender">Female</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Genere" id="maleGender" value="Male" />
+                    <label class="form-check-label" for="maleGender">Male</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Genere" id="otherGender" value="Altro" />
+                    <label class="form-check-label" for="otherGender">Other</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 pb-2">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="email" name="Email" id="emailAddress" class="form-control form-control-lg" />
+                    <label class="form-label" for="emailAddress">Email</label>
+                  </div>
+
+                </div>
+                <div class="col-md-6 mb-4 pb-2">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="tel" id="phoneNumber" name="NumeroDiTelefono" class="form-control form-control-lg" />
+                    <label class="form-label" for="phoneNumber">Phone Number</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="password" id="form3Example4cg" class="form-control form-control-lg" name="Password" />
+                    <label class="form-label" for="form3Example4cg">Password</label>
+                  </div>
+    <div id="divCheckPasswordMatch" class="text-danger"></div>
+
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="password" id="form3Example4cdg" class="form-control form-control-lg" />
+                    <label class="form-label" for="form3Example4cdg">Repeat your password</label>
+                  </div>
+
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="col-md-6 mb-4">
+
+                  <h6 class="mb-2 pb-1">Role: </h6>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ruolo" id="UserRole" value="User"
+                      checked />
+                    <label class="form-check-label" for="userRole">User</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ruolo" id="adminRole" value="Admin" />
+                    <label class="form-check-label" for="adminRole">Admin</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="mt-4 pt-2">
+                <input id="submitBtn" data-mdb-ripple-init class="btn btn-primary btn-lg" type="submit" value="Submit" />
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+ <script>
+  $(document).ready(function(){
+      $('.datepicker').datepicker({
+          format: 'dd/mm/yyyy', // formato della data
+          autoclose: true, // chiudere automaticamente il selettore di date dopo la selezione
+          keyboardNavigation: false // disabilita l'input da tastiera
+      });
+  });
+</script>
+
+<script>
+  $(document).ready(function(){
+      // Funzione per controllare la validità di tutti i campi del modulo
+      function checkFormValidity() {
+          var firstName = $("#firstName").val();
+          var lastName = $("#lastName").val();
+          var birthdayDate = $("#birthdayDate").val();
+          var email = $("#emailAddress").val();
+          var phoneNumber = $("#phoneNumber").val();
+          var password = $("#form3Example4cg").val();
+          var confirmPassword = $("#form3Example4cdg").val();
+
+          // Verifica che tutti i campi siano compilati
+          if (firstName && lastName && birthdayDate && email && phoneNumber && password && confirmPassword) {
+              // Verifica che le password corrispondano
+              if (password != confirmPassword) {
+                  $("#divCheckPasswordMatch").html("Le password non corrispondono!");
+                  $("#submitBtn").prop("disabled", true); // Disabilita il pulsante di invio
+              } else {
+                  $("#divCheckPasswordMatch").html("");
+                  $("#submitBtn").prop("disabled", false); // Abilita il pulsante di invio
+              }
+          } else {
+              // Almeno un campo non è compilato, disabilita il pulsante di invio
+              $("#submitBtn").prop("disabled", true);
+          }
+      }
+
+      // Controlla la validità del modulo all'avvio del documento
+      checkFormValidity();
+
+      // Aggiungi un evento di input a tutti i campi del modulo
+      $("input, select").keyup(checkFormValidity).change(checkFormValidity);
+  });
+</script>
+
+
+
+

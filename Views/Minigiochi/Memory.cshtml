@@ -1,0 +1,128 @@
+@{
+    ViewBag.Title = "Memory Game";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memory Game</title>
+    <style>
+        .grid { display: grid; grid-template-columns: repeat(4, 100px); gap: 10px; }
+        .card { width: 100px; height: 100px; background-color: #ccc; text-align: center; line-height: 100px; font-size: 2em; cursor: pointer; }
+        .flipped { background-color: #fff; }
+        .flipped .symbol { display: block; }
+        .symbol { display: none; }
+    </style>
+</head>
+<body>
+    <div id="game" class="grid"></div>
+    <div id="congratulations" style="display: none;">
+        <h2>Congratulazioni! Hai completato il gioco!</h2>
+    </div>
+
+    <!-- Codice JavaScript del gioco -->
+    <script>
+        class MemoryGameView {
+            constructor(containerId, congratulationsId) {
+                this.container = document.getElementById(containerId);
+                this.congratulations = document.getElementById(congratulationsId);
+            }
+
+            displayCards(cards) {
+                this.container.innerHTML = '';
+                cards.forEach(symbol => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.symbol = symbol;
+                    card.innerHTML = `<span class="symbol">${symbol}</span>`;
+                    this.container.appendChild(card);
+                });
+            }
+
+            flipCard(card) {
+                card.classList.add('flipped');
+            }
+
+            unflipCards(cards) {
+                setTimeout(() => {
+                    cards.forEach(card => {
+                        card.classList.remove('flipped');
+                    });
+                }, 1000);
+            }
+
+            showCongratulations() {
+                this.congratulations.style.display = 'block';
+            }
+
+            hideCongratulations() {
+                this.congratulations.style.display = 'none';
+            }
+        }
+
+        class MemoryGameModel {
+            constructor(view) {
+                this.view = view;
+                this.symbols = ['🧠', '👀', '👃', '👄', '💪', '🦴', '❤️', '🦶'];
+                this.cards = [...this.symbols, ...this.symbols];
+                this.cards = this.cards.sort(() => Math.random() - 0.5);
+                this.firstCard = null;
+                this.secondCard = null;
+                this.lockBoard = false;
+                this.matches = 0;
+            }
+
+            flipCard(card) {
+                if (this.lockBoard) return;
+                if (card === this.firstCard) return;
+
+                this.view.flipCard(card);
+                if (!this.firstCard) {
+                    this.firstCard = card;
+                    return;
+                }
+
+                this.secondCard = card;
+                this.lockBoard = true;
+
+                this.checkMatch();
+            }
+
+            checkMatch() {
+                let isMatch = this.firstCard.dataset.symbol === this.secondCard.dataset.symbol;
+                isMatch ? this.disableCards() : this.unflipCards();
+            }
+
+            disableCards() {
+                this.firstCard.removeEventListener('click', this.firstCard.clickHandler);
+                this.secondCard.removeEventListener('click', this.secondCard.clickHandler);
+                this.resetBoard();
+
+                this.matches++;
+                if (this.matches === this.symbols.length) {
+                    this.view.showCongratulations();
+                }
+            }
+
+            unflipCards() {
+                this.view.unflipCards([this.firstCard, this.secondCard]);
+                this.resetBoard();
+            }
+
+            resetBoard() {
+                [this.firstCard, this.secondCard] = [null, null];
+                this.lockBoard = false;
+            }
+        }
+
+        // Inizializzazione del gioco
+        const view = new MemoryGameView('game', 'congratulations');
+        const model = new MemoryGameModel(view);
+
+        view.displayCards(model.cards);
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => model.flipCard(card));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+@model CourseListViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+    </div>
+</div>
+
+@foreach (CourseViewModel course in Model.Courses)
+{
+    <hr>
+    <div class="row course ">
+        <div class="col-md-2" style="margin: 5px;" >
+            <img src="@course.ImagePath" width="200" height="200" >
+        </div>
+        <div class="col-md-5">
+            <h2>@course.NomeCorso</h2>
+            <author>@course.Descrizione</author>
+        </div>
+        <div class="col-md-2 rating" title="@course.Rating">
+            <div class="d-flex align-items-center justify-content-center h-100">
+                @for(int i = 1; i <= 5; i++)
+                {
+                    if (course.Rating >= i)
+                    {
+                        <i class="fas fa-star"></i>
+                    }
+                    else if (course.Rating > i - 1)
+                    {
+                        <i class="fas fa-star-half-alt"></i>
+                    }
+                    else
+                    {
+                        <i class="far fa-star"></i>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-center">
+            @if(HttpContextAccessor.HttpContext.Session.GetInt32("id") != null)
+            {
+                <a class="btn btn-outline-primary" asp-action="Detail" asp-route-id="@course.Id" asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")">Dettaglio</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-primary" asp-action="Detail" asp-route-id="@course.Id" asp-route-userId="0">Dettaglio</a>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,41 @@
+@model LessonDetailViewModel
+
+<h1>@Model.Lezioni.Titolo</h1>
+
+
+<div class="row">
+	<div class="container">
+		<h3 class="text-center">Lista Risposta</h3>
+		<hr>
+		<div class="container text-left">
+			<a class="btn btn-success" asp-action="AggiungiDomanda" asp-controller="Admin">Aggiungi Risposta</a>
+
+		</div>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Domanda ID</th>
+					<th>Testo Risposta</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				@foreach(var quiz in Model.Quiz){
+				@foreach (var domande in quiz.Domande)
+				{ @foreach (var risposta in domande.Risposte){
+					<tr>
+						<td>@risposta.Id</td>
+						<td>@risposta.DomandaId</td>
+                        <td>@risposta.TestoRisposta</td>
+                        <td>@risposta.IsCorretta</td>
+                        <td><a asp-controller="" asp-action="" asp-route-id="@risposta.Id">Modifica Risposta</a></td>
+						<td><a id="delete-course-link" asp-controller="" asp-action="" asp-route-id="" >Elimina Risposta</a></td>
+					</tr>
+				}}}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+

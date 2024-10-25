@@ -1,0 +1,148 @@
+@model CourseDetailProgressViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<link rel="stylesheet" href="@(Url.Content("~/css/dettagli.css"))">
+@{bool isIscritto = ViewBag.IsIscritto ?? false;}
+@{string userRole = Context.Session.GetString("ruolo");}
+<section class="course-info container">
+    <div class="row">
+        <div class="col-md-9 description-wrapper">
+            <div class="row">
+                <h1>@Model.Dettagli.NomeCorso</h1>
+                <div class="progress" role="progressbar" aria-label="Esempio con etichetta" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width:@Model.Progressi.Progresso%"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">@Model.Progressi.Progresso%</font></font></div>
+                </div>
+            </div>
+            <p>@Model.Dettagli.Descrizione</p> 
+        </div>
+        <div class="col-md-3">
+            <aside class="image-wrapper">
+                <div class="rating" title="@Model.Dettagli.Rating">
+                    <rating value="@Model.Dettagli.Rating"></rating>
+                </div>
+                <img src="@Model.Dettagli.ImagePath" class="img-fluid course-image" alt="@Model.Dettagli.NomeCorso">
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="course-lessons container">
+    <div class="row ">
+        <div class="col-md-9">
+            <h2 class="float-md-left">Lezioni (@Model.Dettagli.Lezioni.Count)</h2>
+        </div>
+        <div class="col-md-3 ">
+            <div class="d-flex justify-content-end">
+                @if (HttpContextAccessor.HttpContext.Session.GetInt32("id") != null && userRole=="User")
+                {
+                    if (!isIscritto)
+                    {
+                        <a asp-action="IscrizioneCorso" asp-controller="Utente"
+                           asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")"
+                           asp-route-courseId="@Model.Dettagli.Id"
+                           class="btn btn-warning btn-lg subscribe-course">Iscriviti</a>
+                    }
+                    else if (isIscritto && Model.Progressi.Progresso < 100)
+                    {
+                        <a asp-controller="Utente" asp-action="DisiscrizioneCorso"
+                            asp-route-courseId = "@Model.Dettagli.Id" asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")"
+                            class="btn btn-outline-danger">Annulla iscrizione</a>
+                    }
+                    else if(isIscritto && Model.Progressi.Progresso == 100)
+                    {
+                        <a class="btn btn-warning btn-lg subscribe-course" style="background-color: green">Corso completato</a>
+                    }
+                }
+                else if(userRole=="User")
+                {
+                    <a asp-action="Accesso" asp-controller="Login" 
+                       class="btn btn-warning btn-lg subscribe-course">Accedi</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="position-relative mt-4">
+        <div id="lessonCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Dettagli.Lezioni.Count; i += 3)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row">
+                            @for (int j = i; j < Math.Min(i + 3, Model.Dettagli.Lezioni.Count); j++)
+                            {
+                                var lezione = Model.Dettagli.Lezioni[j];
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="@lezione.Immagine" class="card-img-top" alt="@lezione.Titolo">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@lezione.Titolo</h5>
+                                            <p class="card-text">@lezione.Descrizione</p>
+                                            <p class="card-text"><small class="text-muted">Durata: @lezione.Durata.ToString("m'm 's's'")</small></p>
+                                        </div>
+                                        <div class="card-footer d-flex justify-content-end">
+                                            @if(HttpContextAccessor.HttpContext.Session.GetInt32("id") != null && isIscritto == true ) 
+                                            {  
+                                                if ((Model.Progressi.LezioniCompletate+1) >= lezione.Sequenza || lezione.Sequenza==1 )
+                                                {
+                                                    <a asp-action="Lezione" asp-controller="Corsi" asp-route-lezioneId="@lezione.Id" class="btn btn-primary">Inizia</a>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn btn-danger" disabled>Non disponibile</button>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                if(lezione.Sequenza >= Model.Dettagli.Lezioni.Count)
+                                {
+                                        <div class="col-md-4">
+                                        <div class="card">
+                                            <img src="\img\tris.jpg" class="card-img-top" alt="Minigioco">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Minigioco</h5>
+                                                <p class="card-text">Metti alla prova le tue conoscenze! Prova questo minigioco per ripassare gli argomenti del corso.</p>
+                                            </div>
+                                            <div class="card-footer d-flex justify-content-end">
+                                                @if(HttpContextAccessor.HttpContext.Session.GetInt32("id") != null && isIscritto == true ) 
+                                                {  
+                                                    if (Model.Progressi.LezioniCompletate >= lezione.Sequenza || lezione.Sequenza==1 ) 
+                                                    {
+                                                        <a asp-action="Play" asp-controller="Minigiochi" asp-route-courseId="@lezione.CorsoId" class="btn btn-primary">Play</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-danger" disabled>Non disponibile</button>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sposta i controlli del carosello all'esterno -->
+        <a class="carousel-control-prev position-absolute top-50 start-0 translate-middle-y" href="#lessonCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next position-absolute top-50 end-0 translate-middle-y" href="#lessonCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+
+    <hr>
+
+    <div class="row course-duration">
+        <div class="col-md-9 d-flex align-items-center">
+            Durata totale del corso
+        </div>
+    </div>

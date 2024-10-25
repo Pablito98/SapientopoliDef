@@ -1,0 +1,49 @@
+@model CourseDetailViewModel
+
+	<div class="row">
+    <div class="col-md-8">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+
+	<h1>@Model.NomeCorso</h1>
+
+  
+</div>
+
+<br>
+<div class="row">
+	<div class="container">
+		<h3 class="text-center">Lista Lezioni</h3>
+		<hr>
+		<div class="container text-left">
+			<a class="btn btn-success" asp-action="AggiungiLezione" asp-controller="Admin" asp-route-id="@Model.Id">Aggiungi Lezione</a>
+
+		</div>
+		<br>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>CorsoId</th>
+					<th>Titolo</th>
+					<th>Sequenza</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				@foreach (LessonViewModel lezioni in Model.Lezioni)
+				{
+					<tr>
+						<td>@lezioni.Id</td>
+						<td>@lezioni.CorsoId</td>
+                        <td>@lezioni.Titolo</td>   
+                        <td>@lezioni.Sequenza</td>
+                        <td><a asp-controller="Admin" asp-action="ModificaLezione" asp-route-id="@lezioni.Id">Modifica Lezione</a></td>
+						<td><a id="delete-course-link" asp-controller="Admin" asp-action="EliminaLezione" asp-route-id="@lezioni.Id" >Elimina Lezione</a></td>
+						<td><a asp-controller="Admin" asp-action="GestioneQuiz" asp-route-id="@lezioni.Id">Modifica Quiz Lezione</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

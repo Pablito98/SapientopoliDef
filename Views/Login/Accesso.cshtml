@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Accesso";
+}
+
+<section >
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          <div class="row g-0">
+            <div class="col-md-6 col-lg-5 d-none d-md-block">
+              <img src="@(Url.Content("~/img/logo.jpg"))" alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+            </div>
+            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5 text-black">
+
+                <form asp-controller="Login" asp-action="Accesso" method="post">
+
+                  <div class="d-flex align-items-center mb-3 pb-1">
+                    <img src="@(Url.Content("~/img/logo.jpg"))" class="nav-logo" alt="logo bianco">
+                    <span class="h1 fw-bold mb-0">Sapientopoli</span>
+                  </div>
+
+                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Entra nel tuo account</h5>
+
+                  <div class="form-outline mb-4">
+                    <input type="email" id="email" class="form-control form-control-lg" name="email" required />
+                    <label class="form-label" for="email">Indirizzo Email</label>
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <input type="password" id="password" class="form-control form-control-lg" name="password" required />
+                    <label class="form-label" for="password">Password</label>
+                  </div>
+
+                  <div class="pt-1 mb-4">
+                    <button class="btn btn-dark btn-lg btn-block" type="submit">Accedi</button>
+                  </div>
+
+                  <a class="small text-muted" href="#!">Password dimenticata?</a>
+                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Non hai un account?<a asp-action="Registrazione" asp-controller="Login" style="color: #393f81;"> Clicca qui</a></p>
+                  <a href="#!" class="small text-muted">Terms of use.</a>
+                  <a href="#!" class="small text-muted">Privacy policy</a>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,74 @@
+@model CourseListViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+    </div>
+</div>
+
+@if (Model.Courses != null && Model.Courses.Count > 0)
+{
+    @foreach (CourseViewModel course in Model.Courses)
+    {
+        <hr>
+        <div class="row course">
+            <div class="col-md-1"> 
+                <img src="@course.ImagePath" width="52" height="52">
+            </div>
+            <div class="col-md-5">
+                <h2>@course.NomeCorso</h2>
+                <author>@course.Descrizione</author>
+            </div>
+            <div class="col-md-2 progress-section d-flex align-items-center">
+                <div class="progress w-100">
+                    <div class="progress-bar" role="progressbar" style="width:@course.Progresso%" aria-valuenow="@course.Progresso" aria-valuemin="0" aria-valuemax="100">@course.Progresso%</div>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <a class="btn btn-outline-primary" asp-action="Detail" asp-controller="Corsi" asp-route-id="@course.Id" asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")">Dettaglio</a>  
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                @if(course.Progresso < 100)
+                {
+                    <a class="btn btn-outline-danger" asp-controller="Utente" asp-action="DisiscrizioneCorso"
+                       asp-route-courseId="@course.Id" asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")">Annulla iscrizione</a>
+                }
+                else
+                {
+                    <a class="btn btn-warning btn-lg subscribe-course" style="background-color: green">Corso completato</a>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="no-courses">
+        <p>Nessun corso disponibile.</p>
+    </div>
+}
+
+<div class="spacer" style="flex-grow: 1;"></div> <!-- Aggiungi uno spacer per mantenere il footer in fondo -->
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+    }
+   
+
+    .content {
+        flex: 1;
+    }
+
+    .spacer {
+        flex-grow: 1;
+    }
+
+
+</style>

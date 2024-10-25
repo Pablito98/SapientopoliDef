@@ -1,0 +1,70 @@
+@model CourseListViewModel
+
+	<div class="row">
+    <div class="col-md-8">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    
+</div>
+
+<br>
+<div class="row">
+	<div class="container">
+		<div>
+			<h3 class="text-center">List of Courses</h3>
+			<div class="col-md-4 d-flex align-items-center">
+        <form asp-controller="Admin" asp-action="GestioneCorsi" method="get">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
+                <div class="input-group-append">
+                    <button class="input-group-text" id="search-button"><i class="fas fas fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div></div>
+		
+		<hr>
+		<div class="container text-left">
+			<a class="btn btn-success" asp-action="AggiungiCorso" asp-controller="Admin">Add New Course</a>
+
+		</div>
+		<br>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nome</th>
+					<th>Rating</th>
+					<th>Immagine</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				@foreach (CourseViewModel corso in Model.Courses)
+				{
+					<tr>
+						<td>@corso.Id</td>
+						<td>@corso.NomeCorso</td>
+                        <td>@corso.Rating</td>   
+                        <td>@corso.ImagePath</td>
+                        <td><a asp-controller="Admin" asp-action="ModificaCorso" asp-route-id="@corso.Id">Modifica Corso</a></td>
+						<td><a id="delete-course-link" asp-controller="Admin" asp-action="EliminaCorso" asp-route-id="@corso.Id" >deleteCourse</a></td>
+						<td><a id="delete-course-link" asp-controller="Admin" asp-action="GestioneLezione" asp-route-id="@corso.Id" >Modifica Lezioni</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#delete-course-link').on('click', function (e) {
+                var confirmed = confirm('Sei sicuro di voler eliminare il corso? Questa azione è irreversibile.');
+                if (!confirmed) {
+                    e.preventDefault(); // Prevenire l'azione di eliminazione se l'utente annulla
+                }
+            });
+        });
+    </script>

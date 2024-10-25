@@ -1,0 +1,137 @@
+/* Colora le freccette laterali in nero */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: black;
+}
+
+/* Cambia il colore degli indicatori delle slide in nero */
+.carousel-indicators li {
+    background-color: black;
+}
+
+/* Cambia il colore dell'indicatore della slide attiva */
+.carousel-indicators .active {
+    background-color: black;
+}
+
+/* Stile personalizzato per le card */
+.card {
+    border-radius: 20px; /* Bordi più arrotondati */
+    border: 3px solid #000; /* Bordo più spesso */
+    height: 500px; /* Altezza della card */
+    margin-bottom: 20px; /* Spazio inferiore tra le card */
+    overflow: hidden; /* Nasconde il contenuto che esce dalla card */
+}
+
+.card-img-top {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px; /* Arrotonda solo i bordi superiori dell'immagine */
+    height: 40%; /* Altezza dell'immagine rispetto all'altezza della card */
+    object-fit: cover; /* Per adattare l'immagine mantenendo le proporzioni */
+}
+
+.card-body {
+    height: calc(60% - 40px); /* Altezza del corpo della card rispetto all'altezza della card meno la padding */
+    padding: 20px; /* Spaziatura interna */
+    overflow-y: auto; /* Permette lo scorrimento verticale se il contenuto è troppo grande */
+}
+
+.course-info {
+    position: relative;
+}
+
+.description-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-wrapper {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.course-image {
+    max-height: 100%; /* Assicura che l'immagine non superi l'altezza della descrizione */
+    width: auto; /* Mantiene le proporzioni */
+}
+.quiz {
+    background-color: #f8f9fa;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.quiz h4 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #021243; /* Colore del titolo della quiz */
+}
+
+.domande {
+    margin-bottom: 15px;
+}
+
+.domanda h5 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #ee9208; /* Colore del testo delle domande */
+}
+
+.risposte {
+    list-style: none;
+    padding: 0;
+}
+
+.risposte li {
+    margin-bottom: 10px;
+}
+
+.risposte label {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.risposte input[type="radio"] {
+    margin-right: 10px;
+}
+
+.risposte label:hover {
+    background-color: #f1f1f1;
+}
+
+
+#resultMessage {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#startQuizButton {
+    background-color: #ee9208;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#startQuizButton:hover {
+    background-color: #021243;
+    color: #fff;
+}
+
+#timer {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.margine{
+    margin: 15px;
+  }

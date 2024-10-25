@@ -1,0 +1,64 @@
+@model UtentiListViewModel
+
+	<div class="row">
+    <div class="col-md-8">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+        <form asp-controller="Admin" asp-action="GestioneUtenti" method="get">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
+                <div class="input-group-append">
+                    <button class="input-group-text" id="search-button"><i class="fas fas fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<div class="row">
+	<div class="container">
+		<h3 class="text-center">List of Users</h3>
+		<hr>
+		<div class="container text-left">
+			<a class="btn btn-success" asp-action="AddUserAdmin" asp-controller="Admin">Add New User</a>
+
+		</div>
+		<br>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nome</th>
+					<th>Cognome</th>
+					<th>Genere</th>
+                    <th>Data Nascita</th>
+                    <th>Numero Telefono</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Ruolo</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				@foreach (UtentiViewModel utente in Model.Utenti)
+				{
+					<tr>
+						<td>@utente.Id</td>
+						<td>@utente.Nome</td>
+                        <td>@utente.Cognome</td>   
+                        <td>@utente.Genere</td>
+                        <td>@utente.DataDiNascita</td>
+                        <td>@utente.NumeroDiTelefono</td>
+                        <td>@utente.Email</td>
+						<td>@utente.Password</td>
+                        <td>@utente.Ruolo</td>
+                        <td><a asp-controller="Login" asp-action="Update" asp-route-id="@utente.Id">updateUser</a></td>
+						<td><a asp-controller="Login" asp-action="EliminaUtente" asp-route-id="@utente.Id" >deleteUser</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,152 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model UtentiViewModel
+@{
+    ViewData["Title"] = "Modifica Utente";
+}  
+
+<section class="gradient-custom" >
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-9 col-xl-7">
+        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Modifica dati utenti</h3>
+            <form asp-controller="Login" asp-action="ModificaUtente" method="post" enctype="multipart/form-data" asp-route-id="@Model.Id">
+
+              <div class="row">
+
+                <input type="hidden" name="id" value="@Model.Id">
+
+                <div class="col-md-6 mb-4">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="text" name="Nome" id="firstName" class="form-control form-control-lg" value="@Model.Nome"/>
+                    <label class="form-label" for="firstName">Nome</label>
+                  </div>
+
+                </div>
+                <div class="col-md-6 mb-4">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="text" id="lastName" class="form-control form-control-lg" name="Cognome" value="@Model.Cognome"/>
+                    <label class="form-label" for="lastName" >Cognome</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-4 d-flex align-items-center">
+
+@{
+  string dataDiNascitaFormatted = Model.DataDiNascita.ToString("dd/MM/yyyy");
+}
+                  <div data-mdb-input-init class="form-outline  w-100">
+                    <input type="text" value="@dataDiNascitaFormatted" class="form-control form-control-lg datepicker" id="birthdayDate"
+                      name="DataDiNascita" readonly />
+                    <label for="birthdayDate" class="form-label">Birthday</label>
+                  </div>
+
+                </div>
+@{
+    string genere = Model.Genere;
+}
+        <div class="col-md-6 mb-4">
+            <h6 class="mb-2 pb-1">Genere </h6>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="Genere" id="femaleGender"
+                    value="Female" @(genere == "Female" ? "checked" : "") />
+                <label class="form-check-label" for="femaleGender">Donna</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="Genere" id="maleGender"
+                    value="Male" @(genere == "Male" ? "checked" : "") />
+                <label class="form-check-label" for="maleGender">Uomo</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="Genere" id="otherGender"
+                    value="Altro" @(genere == "Altro" ? "checked" : "") />
+                <label class="form-check-label" for="otherGender">Altro</label>
+            </div>
+        </div>
+            
+
+              <div class="row">
+                <div class="col-md-6 mb-4 pb-2">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="email" name="Email" id="emailAddress" class="form-control form-control-lg" value="@Model.Email"/>
+                    <label class="form-label" for="emailAddress">Email</label>
+                  </div>
+
+                </div>
+                <div class="col-md-6 mb-4 pb-2">
+
+                  <div data-mdb-input-init class="form-outline">
+                    <input type="tel" id="phoneNumber" name="NumeroDiTelefono"class="form-control form-control-lg" value="@Model.NumeroDiTelefono" />
+                    <label class="form-label" for="phoneNumber">Numero di telefono</label>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+
+                  
+                  <div data-mdb-input-init class="form-outline mb-4">
+                  <input type="text" id="form3Example4cg" class="form-control form-control-lg" name="Password" value="@Model.Password"/>
+                  <label class="form-label" for="form3Example4cg">Password</label>
+                </div>
+
+              @{string userRole = Context.Session.GetString("ruolo");}
+
+              @if(userRole == "Admin"){
+                <div class="row">
+                <div class="col-md-6 mb-4">
+
+                  <h6 class="mb-2 pb-1">Role: </h6>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ruolo" id="UserRole" value="User"
+                      checked />
+                    <label class="form-check-label" for="userRole">User</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ruolo" id="adminRole" value="Admin" />
+                    <label class="form-check-label" for="adminRole">Admin</label>
+                  </div>
+                  </div>
+              </div>
+              }
+              else{
+                <input style="display:none" name="Ruolo" id="userRole" value="User" />
+              }
+
+              <div class="mt-4 pt-2">
+                <input data-mdb-ripple-init class="btn btn-primary btn-lg" type="submit" value="Update"/>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+ <script>
+  $(document).ready(function(){
+      $('.datepicker').datepicker({
+          format: 'dd/mm/yyyy', // formato della data
+          autoclose: true, // chiudere automaticamente il selettore di date dopo la selezione
+          keyboardNavigation: false // disabilita l'input da tastiera
+      });
+  });
+</script>
+

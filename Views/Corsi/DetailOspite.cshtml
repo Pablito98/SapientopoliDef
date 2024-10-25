@@ -1,0 +1,120 @@
+@model CourseDetailViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<link rel="stylesheet" href="@(Url.Content("~/css/dettagli.css"))">
+<section class="course-info">
+    <div class="row">
+        <div class="col-md-9">
+            <h1>@Model.NomeCorso</h1>
+            <p>@Model.Descrizione</p>
+        </div>
+        <div class="col-md-3">
+            <aside>
+                <div class="rating" title="@Model.Rating">
+                    <rating value="@Model.Rating"></rating>
+                </div>
+                <img src="@Model.ImagePath" class="img-fluid course-image" alt="@Model.NomeCorso">
+            </aside>
+        </div>
+    </div> 
+</section>
+
+<section class="course-lessons">
+    <div class="row">
+        <div class="col-md-9">
+            <h2 class="float-md-left">Lezioni (@Model.Lezioni.Count)</h2>
+        </div>
+        <div class="col-md-3">
+            <div class="d-flex justify-content-end">
+                <form class="d-flex" method="get">
+                    <div class="d-flex align-items-end">
+            @if (Context.Session.GetInt32("id") != null)
+            {
+                bool isIscritto = ViewBag.IsIscritto ?? false; // Imposta lo stato predefinito su false se non è stato passato alcun valore
+
+                @if (isIscritto)
+                {
+                    <form class="d-flex" method="get">
+                        <div class="d-flex align-items-end">
+                            <a asp-controller="Utente" asp-action="IMieiCorsi"
+                                    asp-route-id="@HttpContextAccessor.HttpContext.Session.GetInt32("id")"
+                               
+                               class="btn btn-warning btn-lg subscribe-course">Iscritto - continua corso</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <form class="d-flex" method="get">
+                        <div class="d-flex align-items-end">
+                            <a asp-action="IscrizioneCorso" asp-controller="Utente"
+                               asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")"
+                               asp-route-courseId="@Model.Id"
+                               class="btn btn-warning btn-lg subscribe-course">Iscriviti</a>
+                        </div>
+                    </form>
+                }
+            }
+            else
+            {
+                <form class="d-flex" method="get">
+                    <div class="d-flex align-items-end">
+                        <a asp-action="Accesso" asp-controller="Login" 
+                           class="btn btn-warning btn-lg subscribe-course">Accedi</a>
+                    </div>
+                </form>
+            }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+<div id="lessonCarousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        @for (int i = 0; i < Model.Lezioni.Count; i += 3)
+        {
+            <div class="carousel-item @(i == 0 ? "active" : "")">
+                <div class="row">
+                    @for (int j = i; j < Math.Min(i + 3, Model.Lezioni.Count); j++)
+                    {
+                        var lezione = Model.Lezioni[j];
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="@lezione.Immagine" class="card-img-top" alt="@lezione.Titolo">
+                                <div class="card-body">
+                                    <h5 class="card-title">@lezione.Titolo</h5>
+                                    <p class="card-text">@lezione.Descrizione</p>
+                                    <p class="card-text"><small class="text-muted">Durata: @lezione.Durata.ToString("m'm 's's'")</small></p>
+                                </div>
+                           
+                                </div>
+                            </div>
+                        
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <a class="carousel-control-prev" href="#lessonCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#lessonCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+
+<hr>
+
+<div class="row course-duration">
+    <div class="col-md-9 d-flex align-items-center">
+        Durata totale del corso
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+        <i class="far fa-clock"></i><time>@Model.TotalCourseDuration.ToString("h'h 'm'm 's's'")</time>
+    </div>
+</div>

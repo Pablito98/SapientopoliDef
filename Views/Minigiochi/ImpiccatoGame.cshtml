@@ -1,0 +1,275 @@
+@{
+    ViewData["Title"] = "Trova la parola";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<form asp-action="ListaCorsi" asp-controller="Corsi"
+    asp-route-userId="@HttpContextAccessor.HttpContext.Session.GetInt32("id")">
+    <button class="btn" type="submit">Torna ai corsi</button>
+</form>
+
+<h1>Indovina la parola</h1>
+
+<div class="container">
+    <div class="descrizione">
+        <p>Scopri di quali lettere è composta la parola. Hai solo 5 vite, ma non temere, ti diamo qualche suggerimento!
+            ;)</p>
+        <center>
+            <h5 id="livelloCorrente"></h5>
+        </center>
+
+    </div>
+
+
+
+    <div class="container-gioco">
+        <div class="col-sinistra">
+            <h6>
+                <center>Parole trovate:</center>
+            </h6>
+            <div class="col-sinistra">
+
+                <ul id="paroleTrovate"></ul>
+            </div>
+            <ul id="paroleTrovate"></ul>
+        </div>
+        <div class="col-centro">
+            <div id="parolaDaIndovinare" class="centrato"></div>
+            <p id="suggerimento" class="centrato"></p>
+            <div id="lettere" class="centrato"></div>
+
+            <p id="messaggio" class="centrato" aria-live="polite"></p>
+            <div id="trofeo" class="centrato" style="display: none;"></div>
+
+
+        </div>
+        <div class="col-destra">
+            <h6>
+                <center>Vite rimanenti: </center>
+            </h6>
+            <div id="viteRimanenti" class="centrato"></div>
+
+            <div class="centrato-orizzontale">
+                <button id="successivo" class="btn" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M10.293 3.707a1 1 0 0 1 1.414-1.414l5 5a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414-1.414L13.586 9H1a1 1 0 1 1 0-2h12.586l-3.293-3.293z" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container-gioco {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+    }
+
+
+
+
+
+
+    .col-sinistra,
+    .col-centro,
+    .col-destra {
+        padding: 10px;
+    }
+
+    .centrato {
+        text-align: center;
+    }
+
+    .centrato-orizzontale {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        /* Assicurati che il contenitore prenda tutta la larghezza disponibile */
+    }
+
+    #lettere button {
+        font-family: 'Arial', sans-serif;
+        font-size: 18px;
+        padding: 10px 20px;
+        margin: 5px;
+        border: 2px solid #ee9208;
+        border-radius: 5px;
+        background-color: transparent;
+        color: #ee9208;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    #lettere button:hover,
+    #lettere button[disabled] {
+        background-color: #ffffff;
+        color: #ee9208;
+    }
+
+    #suggerimento {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const parole = [
+            ["osso", "dente", "lingua", "sangue", "cuore"],          // Livello 1
+            ["fegato", "stomaco", "polmone", "intestino", "muscolo"], // Livello 2
+            ["cellula", "anticorpo", "digestione", "scheletro", "saliva"], // Livello 3
+            ["emoglobina", "epidermide", "circolazione", "enzima", "immunitario"] // Livello 4
+        ];
+        let livelloCorrente = 0;
+        let indiceParolaCorrente = -1;
+        let lettereIndovinate = new Set();
+        let vite = 5;
+        let paroleTrovateNelLivello = 0;
+
+        const paroleTrovateUl = document.getElementById("paroleTrovate");
+        const parolaDaIndovinareDiv = document.getElementById("parolaDaIndovinare");
+        const suggerimentoP = document.getElementById("suggerimento");
+        const viteRimanentiDiv = document.getElementById("viteRimanenti");
+        const lettereDiv = document.getElementById("lettere");
+        const successivoBtn = document.getElementById("successivo");
+        const messaggioDiv = document.getElementById("messaggio");
+        const trofeoDiv = document.getElementById("trofeo");
+        const livelloCorrenteP = document.getElementById("livelloCorrente"); // Elemento per visualizzare il livello corrente
+
+        const suggerimenti = {
+            "sangue": "Circola nel nostro corpo",
+            "cuore": "Pompa il sangue",
+            "fegato": "Filtra le tossine",
+            "stomaco": "Aiuta nella digestione",
+            "polmone": "Responsabile della respirazione",
+            "intestino": "Assorbe i nutrienti",
+            "dente": "Aiuta a masticare il cibo",
+            "lingua": "Percepisce i sapori",
+            "osso": "Sostiene il nostro corpo",
+            "muscolo": "Permette i movimenti",
+            "cellula": "Unità fondamentale della vita",
+            "anticorpo": "Combatte le infezioni",
+            "digestione": "Processo di scomposizione del cibo",
+            "scheletro": "Struttura ossea del corpo",
+            "emoglobina": "Trasporta l'ossigeno nel sangue",
+            "saliva": "Aiuta nella digestione del cibo",
+            "epidermide": "Strato più esterno della pelle",
+            "circolazione": "Movimento del sangue nel corpo",
+            "enzima": "Catalizzatore delle reazioni chimiche",
+            "immunitario": "Difende il corpo dalle infezioni"
+        };
+
+        function aggiornaLivelloCorrente() {
+            livelloCorrenteP.textContent = `Lvl: ${livelloCorrente + 1}`;
+        }
+
+        function nuovaParola() {
+            if (paroleTrovateNelLivello >= 5) {
+                livelloCorrente++;
+                paroleTrovateNelLivello = 0;
+                messaggioDiv.textContent = `Complimenti! Hai sbloccato il livello ${livelloCorrente + 1}.`;
+            }
+
+            if (livelloCorrente >= parole.length) {
+                messaggioDiv.textContent = "Hai completato tutti i livelli! Complimenti!";
+                return;
+            }
+
+            indiceParolaCorrente++;
+            const parolaDaIndovinare = parole[livelloCorrente][indiceParolaCorrente % 5];
+            lettereIndovinate.clear();
+            vite = 5;
+
+            parolaDaIndovinareDiv.innerHTML = parolaDaIndovinare
+                .split("")
+                .map(lettera => (lettereIndovinate.has(lettera) ? lettera : "_"))
+                .join(" ");
+
+            suggerimentoP.textContent = `Indizio: ${suggerimenti[parolaDaIndovinare]}`;
+            viteRimanentiDiv.textContent = `${vite}`;
+            messaggioDiv.textContent = "";
+            successivoBtn.style.display = "none";
+
+            aggiornaLivelloCorrente(); // Aggiorna il livello corrente
+        }
+
+        function aggiornaStatoPartita() {
+            
+            if (vite === 0) {
+                messaggioDiv.textContent = "Hai perso!";
+                disabilitaPulsantiLettere();
+                successivoBtn.style.display = "block";
+            } else if (parolaDaIndovinareDiv.textContent.indexOf("_") === -1) {
+                messaggioDiv.textContent = "Hai vinto!";
+                trofeoDiv.style.display = "none"; // Nascondi trofeoDiv se non necessario
+                disabilitaPulsantiLettere();
+                successivoBtn.style.display = "block"; // Mostra il bottone "successivo"
+                aggiungiParolaTrovata(parole[livelloCorrente][indiceParolaCorrente % 5]);
+                paroleTrovateNelLivello++;
+            }
+        }
+
+        function disabilitaPulsantiLettere() {
+            const bottoniLettere = document.querySelectorAll("#lettere button");
+            bottoniLettere.forEach(button => button.disabled = true);
+        }
+
+        function aggiungiParolaTrovata(parola) {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${parola.toUpperCase()}`;
+            paroleTrovateUl.appendChild(listItem);
+        }
+
+        nuovaParola();
+
+        for (let charCode = 97; charCode <= 122; charCode++) {
+            const lettera = String.fromCharCode(charCode);
+            const button = document.createElement("button");
+            messaggioDiv.textContent = ":D ";
+            button.textContent = lettera;
+            button.setAttribute("aria-label", `Lettera ${lettera.toUpperCase()}`);
+            button.addEventListener("click", function () {
+                if (lettereIndovinate.has(lettera)) return;
+                if (parole[livelloCorrente][indiceParolaCorrente % 5].includes(lettera)) {
+                    lettereIndovinate.add(lettera);
+                    parolaDaIndovinareDiv.innerHTML = parole[livelloCorrente][indiceParolaCorrente % 5]
+                        .split("")
+                        .map(l => (lettereIndovinate.has(l) ? l : "_"))
+                        .join(" ");
+                } else {
+                    vite--;
+                    viteRimanentiDiv.textContent = `${vite}`;
+                }
+                aggiornaStatoPartita();
+            });
+            lettereDiv.appendChild(button);
+        }
+
+        successivoBtn.addEventListener("click", function () {
+            trofeoDiv.style.display = "none";
+            nuovaParola();
+            const buttons = lettereDiv.querySelectorAll("button");
+            buttons.forEach(button => {
+                button.disabled = false;
+            });
+        });
+    });
+
+</script>

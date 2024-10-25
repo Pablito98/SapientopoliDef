@@ -13,14 +13,17 @@
 		<div>
 			<h3 class="text-center">List of Courses</h3>
 			<div class="col-md-4 d-flex align-items-center">
-        <form asp-controller="Admin" asp-action="GestioneCorsi" method="get">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
-                <div class="input-group-append">
-                    <button class="input-group-text" id="search-button"><i class="fas fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
+     <form asp-controller="Admin" asp-action="GestioneCorsi" method="get">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" id="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
     </div></div>
 		
 		<hr>

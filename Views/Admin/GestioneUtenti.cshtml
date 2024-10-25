@@ -4,22 +4,29 @@
     <div class="col-md-8">
         <h1>@ViewData["Title"]</h1>
     </div>
-    <div class="col-md-4 d-flex align-items-center">
-        <form asp-controller="Admin" asp-action="GestioneUtenti" method="get">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
-                <div class="input-group-append">
-                    <button class="input-group-text" id="search-button"><i class="fas fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
-    </div>
+   
 </div>
 
 <br>
 <div class="row">
 	<div class="container">
-		<h3 class="text-center">List of Users</h3>
+		<div>
+			<h3 class="text-center">Lista Utenti</h3>
+			 <div class="col-md-4 d-flex align-items-center">
+       <form asp-controller="Admin" asp-action="GestioneCorsi" method="get">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." value="@Model.Ricerca.Search" aria-describedby="search-button">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" id="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+    </div>
+		</div>
+		
 		<hr>
 		<div class="container text-left">
 			<a class="btn btn-success" asp-action="AddUserAdmin" asp-controller="Admin">Add New User</a>
